@@ -5,7 +5,7 @@ from unittest.mock import patch
 import pytest
 from click.testing import CliRunner
 
-from public_workflow_loader.__main__ import main
+from public_workflow_loader.__main__ import does_dir_exist, main
 
 
 @pytest.fixture()
@@ -27,8 +27,6 @@ def test_cli(mock_WorkflowRunnerClient, mock_list_dir, mock_does_dir_exist, sete
 
     # Configure mocks
     mock_workflow_runner_client = mock.Mock()
-    print(mock_WorkflowRunnerClient)
-    print(mock_workflow_runner_client)
     mock_workflow_runner_client.deploy_workflow_from_file_path.return_value = None
     mock_WorkflowRunnerClient.return_value = mock_workflow_runner_client
     mock_list_dir.return_value = [
@@ -85,3 +83,11 @@ def test_cli_dir_doesnt_exist(
     # Assertions
     assert result.exit_code == 1
     assert "Directory ./workflows does not exist." in str(result.exception)
+
+
+def test_does_dir_exist():
+    # Test with an existing directory
+    assert does_dir_exist("./tests")
+
+    # Test with a non-existing directory
+    assert not does_dir_exist("./non_existing_dir")
