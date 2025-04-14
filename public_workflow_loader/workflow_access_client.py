@@ -13,7 +13,7 @@ class WorkflowAccessClient:
         self.s3_prefix = prefix
         self.workspace = workspace
 
-        with open(os.path.join(template_filepath, "access_policy.json"), "r") as file:
+        with open(os.path.join(template_filepath, "access-policy.json"), "r") as file:
             self.access_policy_template = json.load(file)
 
         self.s3_client = self.create_s3_client()
@@ -35,9 +35,11 @@ class WorkflowAccessClient:
         Create and upload the access policy to S3.
         """
         access_policy = self.create_access_policy(workflow_id)
-        s3_path = f"{self.s3_prefix}/{workspace}/{workflow_id}.access_policy.json"
+        s3_path = f"{self.s3_prefix}/{workspace}/{workflow_id}.access-policy.json"
         logging.info(f"Uploading access policy for {workflow_id} to S3: {s3_path}")
         try:
-            self.s3_client.put_object(json.dumps(access_policy), self.s3_bucket, s3_path)
+            self.s3_client.put_object(
+                Body=json.dumps(access_policy), Bucket=self.s3_bucket, Key=s3_path
+            )
         except Exception as e:
             raise ValueError(f"Failed to upload access policy: {e}") from e
