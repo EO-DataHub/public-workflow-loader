@@ -36,7 +36,7 @@ class WorkflowAccessClient:
         """
         access_policy = self.create_access_policy(workflow_id)
         s3_path = f"{self.s3_prefix}/{workspace}/{workflow_id}.access-policy.json"
-        logging.info(f"Uploading access policy for {workflow_id} to S3: {s3_path}")
+        logging.info("Uploading access policy for %s to S3 at %s", workflow_id, s3_path)
         try:
             self.s3_client.put_object(
                 Body=json.dumps(access_policy), Bucket=self.s3_bucket, Key=s3_path

@@ -17,7 +17,7 @@ def does_dir_exist(path: str):
     Check if the given directory exists.
     """
     if not os.path.exists(path):
-        logging.error(f"Directory {dir} does not exist.")
+        logging.error("Directory %s does not exist.", dir)
         return False
     return True
 
@@ -64,13 +64,18 @@ def main(workspace: str, workflows_file_path: str, templates_file_path: str, pre
         file_path for file_path in os.listdir(workflows_file_path) if file_path.endswith(".cwl")
     ]
 
-    logging.info(f"Found workflow files to load: {workflow_files}")
+    logging.info("Found workflow files to load: %s", workflow_files)
+
+    deploy_count = 0
 
     for file in workflow_files:
         file_path = os.path.join(workflows_file_path, file)
         workflow_id = workflow_runner_client.deploy_workflow_from_file_path(file_path)
         if workflow_id:
             workflow_access_client.create_and_upload_access_policy(workspace, workflow_id)
+            deploy_count += 1
+
+    logging.info("%i workflows deployed and access policies created.", deploy_count)
 
 
 if __name__ == "__main__":

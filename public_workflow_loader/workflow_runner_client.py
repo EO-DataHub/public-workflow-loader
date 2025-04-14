@@ -30,7 +30,7 @@ class WorkflowRunnerClient:
         if response.status_code != 204:
             raise ValueError(f"Attempted to update workflow: {workflow_id} - {response.text}")
         else:
-            logging.info(f"Successfully updated workflow: {workflow_id}")
+            logging.info("Successfully updated workflow: %s", workflow_id)
 
     def deploy(self, workflow_id: str, workflow: bytes):
         """
@@ -46,10 +46,10 @@ class WorkflowRunnerClient:
             },
         )
         if response.status_code == 201:
-            logging.info(f"Successfully deployed workflow: {workflow_id}")
+            logging.info("Successfully deployed workflow: %s", workflow_id)
         elif response.status_code == 409:
             logging.warning(
-                f"Failed to deploy workflow: {workflow_id}, already deployed, updating instead."
+                "Failed to deploy workflow: %s, already deployed, updating instead.", workflow_id
             )
             self.update(workflow_id, workflow)
         else:
@@ -81,7 +81,7 @@ class WorkflowRunnerClient:
         """
         Deploy a workflow to the Workflow Runner.
         """
-        logging.info(f"Deploying workflow from {workflow_file_path}")
+        logging.info("Deploying workflow from %s", workflow_file_path)
         try:
             with open(workflow_file_path, "r") as file:
                 workflow = file.read()
@@ -89,5 +89,5 @@ class WorkflowRunnerClient:
                 self.deploy(workflow_id, workflow)
             return workflow_id
         except Exception as e:
-            logging.error(f"Failed to deploy workflow at {workflow_file_path}: {e}")
+            logging.error("Failed to deploy workflow at %s: %s", workflow_file_path, e)
             return ""
