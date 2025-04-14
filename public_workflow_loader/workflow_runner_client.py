@@ -11,7 +11,7 @@ class WorkflowRunnerClient:
         Initialize the WorkflowRunnerClient with the provided API client.
         """
         self.base_wf_url = base_wr_url
-        self.wr_url = base_wr_url.replace("{workspace}", workspace, 1)
+        self.wr_url = f"{base_wr_url}/{workspace}"
         self.api_token = api_token
 
     def update(self, workflow_id: str, workflow: bytes):
@@ -53,7 +53,10 @@ class WorkflowRunnerClient:
             )
             self.update(workflow_id, workflow)
         else:
-            raise ValueError(f"Failed to deploy workflow: {workflow_id} - {response.text}")
+            raise ValueError(
+                f"Failed to deploy workflow: {workflow_id} - URL: "
+                f"{self.wr_url}/processes, Error: {response.text}"
+            )
 
     def get_workflow_id(self, workflow: bytes):
         """
@@ -75,7 +78,7 @@ class WorkflowRunnerClient:
         except yaml.YAMLError as e:
             raise ValueError(f"Failed to parse CWL file: {e}") from e
 
-    def deploy_workflow_from_file_path(self, workflow_file_path):
+    def deploy_workflow_from_file_path(self, workflow_file_path) -> str:
         """
         Deploy a workflow to the Workflow Runner.
         """
@@ -85,5 +88,7 @@ class WorkflowRunnerClient:
                 workflow = file.read()
                 workflow_id = self.get_workflow_id(workflow)
                 self.deploy(workflow_id, workflow)
+            return workflow_id
         except Exception as e:
             logging.error(f"Failed to deploy workflow at {workflow_file_path}: {e}")
+            return ""
