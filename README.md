@@ -1,11 +1,17 @@
 # UK EO Data Hub Platform: Default Workflow Loader
 
-This repository provides a command line application that can deploy any workflows in a given directory to the Workflow Runner on the EO DataHub Platform. It takes as inputs the name of the workspace in which to deploy the workflows, and a directory containing any CWL files that are to be deployed to the workspace. You can invoke the app as follows:
+This repository provides a command line application that can deploy any workflows in a given directory to the Workflow Runner on the EO DataHub Platform. It takes as inputs:
+- The name of the workspace in which to deploy the workflows
+- A directory containing any CWL files that are to be deployed to the workspace
+- A directory containing templates to be used when generating access policy files
+- An **optional** prefix parameter specifying the S3 bucket prefix for the access policies. 
+
+You can invoke the app as follows:
 ```
-python -m public_workflow_loader <workspace> <workflows-dir>
+python -m public_workflow_loader <workspace> <workflows-dir> <templates-dir> -p <prefix>
 ```
 
-You also need to provide some environment variables for the Workflow Runner API, `WORKFLOW_RUNNER_API_URL`, and a Workspace-scoped API token, `WORKSPACE_API_TOKEN`, to be used in authenticated requests. This token needs to be scoped to the provided <workspace> command line input. To set these environment variables, an example .env file is provided, please copy this and update it with your configuration values then load these environment variables:
+You also need to provide some environment variables for the Workflow Runner API, `WORKFLOW_RUNNER_API_URL`, and a Workspace-scoped API token, `WORKSPACE_API_TOKEN`, to be used in authenticated requests. This token needs to be scoped to the provided <workspace> command line input. To set these environment variables, an example .env file is provided, `sample.env`, please copy this and update it with your configuration values then load these environment variables:
 ```
 set -a # allows us to export variables from the file
 source .env # load environment variables into your local environment
