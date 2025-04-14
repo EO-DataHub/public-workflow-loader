@@ -3,6 +3,7 @@ import os
 
 import click
 
+from .workflow_access_client import WorkflowAccessClient
 from .workflow_runner_client import WorkflowRunnerClient
 
 logging.basicConfig(
@@ -24,7 +25,9 @@ def does_dir_exist(path: str):
 @click.command()
 @click.argument("workspace", type=str)
 @click.argument("workflows-file-path", type=str)
-def main(workspace: str, workflows_file_path: str):
+@click.argument("templates-file-path", type=str)
+@click.option("-p", "--prefix", type=str, default="deployed")
+def main(workspace: str, workflows_file_path: str, templates_file_path: str, prefix: str):
     """
     Load CWL workflows from the given directory and deploy them to the Workflow Runner.
     """
@@ -33,16 +36,29 @@ def main(workspace: str, workflows_file_path: str):
         workspace=workspace,
         api_token=os.getenv("WORKSPACE_API_TOKEN"),
     )
+    workflow_access_client = WorkflowAccessClient(
+        template_filepath=templates_file_path,
+        bucket=os.getenv("S3_POLICY_BUCKET"),
+        prefix=prefix,
+        workspace=workspace,
+    )
 
     if not does_dir_exist(workflows_file_path):
         raise ValueError(f"Directory {workflows_file_path} does not exist.")
 
-    ## Get all files in dir
-    workflow_files = os.listdir(workflows_file_path)
+    ## Get all files in directory
+    workflow_files = [
+        file_path for file_path in os.listdir(workflows_file_path) if file_path.endswith(".cwl")
+    ]
+
+    logging.info(f"Found workflow files to load: {workflow_files}")
 
     for file in workflow_files:
         file_path = os.path.join(workflows_file_path, file)
-        workflow_runner_client.deploy_workflow_from_file_path(file_path)
+        workflow_id = workflow_runner_client.deploy_workflow_from_file_path(file_path)
+        logging.error(workflow_id)
+        if workflow_id:
+            workflow_access_client.create_and_upload_access_policy(workspace, workflow_id)
 
 
 if __name__ == "__main__":
