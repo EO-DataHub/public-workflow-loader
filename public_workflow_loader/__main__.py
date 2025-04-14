@@ -41,7 +41,8 @@ def main(workspace: str, workflows_file_path: str):
     workflow_files = os.listdir(workflows_file_path)
 
     for file in workflow_files:
-        workflow_runner_client.deploy_workflow_from_file_path(file)
+        file_path = os.path.join(workflows_file_path, file)
+        workflow_runner_client.deploy_workflow_from_file_path(file_path)
 
 
 if __name__ == "__main__":
