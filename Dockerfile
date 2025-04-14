@@ -10,11 +10,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 WORKDIR /app
 ADD LICENSE requirements.txt ./
-ADD public_workflow_loader/ ./public_workflow_loader/
 ADD pyproject.toml ./
 RUN --mount=type=cache,target=/root/.cache/pip pip3 install -r requirements.txt .
+ADD public_workflow_loader/ ./public_workflow_loader/
 
-# Change as required, eg
-#  CMD ["gunicorn", "-w", "2", "-b", "0.0.0.0", "-k", "uvicorn.workers.UvicornWorker", "--log-level", "debug", "mymodule.main:app"]
-ENTRYPOINT [ "python", "-m", "public_workflow_loader" ]
+ENTRYPOINT [ "python", "-m", "public_workflow_loader"]
 
