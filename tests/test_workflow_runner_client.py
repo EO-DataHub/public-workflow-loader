@@ -10,7 +10,7 @@ from public_workflow_loader.workflow_runner_client import WorkflowRunnerClient
 @pytest.fixture()
 def workflow_runner_client():
     workflow_runner_client = WorkflowRunnerClient(
-        base_wr_url="https://example.com/{workspace}",
+        base_wr_url="https://example.com/wr",
         workspace="test-workspace",
         api_token="test-token",
     )
@@ -30,7 +30,7 @@ def test_deploy_success(mock_requests_post, workflow_runner_client, caplog):
 
     # Assertions
     mock_requests_post.assert_called_once_with(
-        "https://example.com/test-workspace/processes",
+        "https://example.com/wr/test-workspace/processes",
         data=b"test_workflow_content",
         headers={
             "Authorization": "Bearer test-token",
@@ -58,7 +58,7 @@ def test_deploy_update_success(
 
     # Assertions
     mock_requests_post.assert_called_once_with(
-        "https://example.com/test-workspace/processes",
+        "https://example.com/wr/test-workspace/processes",
         data=b"test_workflow_content",
         headers={
             "Authorization": "Bearer test-token",
@@ -67,7 +67,7 @@ def test_deploy_update_success(
         },
     )
     mock_requests_put.assert_called_once_with(
-        "https://example.com/test-workspace/processes/test_workflow",
+        "https://example.com/wr/test-workspace/processes/test_workflow",
         data=b"test_workflow_content",
         headers={
             "Authorization": "Bearer test-token",
@@ -100,7 +100,7 @@ def test_deploy_update_failure(
 
     # Assertions
     mock_requests_post.assert_called_once_with(
-        "https://example.com/test-workspace/processes",
+        "https://example.com/wr/test-workspace/processes",
         data=b"test_workflow_content",
         headers={
             "Authorization": "Bearer test-token",
@@ -109,7 +109,7 @@ def test_deploy_update_failure(
         },
     )
     mock_requests_put.assert_called_once_with(
-        "https://example.com/test-workspace/processes/test_workflow",
+        "https://example.com/wr/test-workspace/processes/test_workflow",
         data=b"test_workflow_content",
         headers={
             "Authorization": "Bearer test-token",
@@ -137,7 +137,7 @@ def test_deploy_failure(mock_requests_post, workflow_runner_client, caplog):
 
     # Assertions
     mock_requests_post.assert_called_once_with(
-        "https://example.com/test-workspace/processes",
+        "https://example.com/wr/test-workspace/processes",
         data=b"test_workflow_content",
         headers={
             "Authorization": "Bearer test-token",
