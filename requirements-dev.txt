@@ -6,6 +6,12 @@
 #
 black==25.1.0
     # via public-workflow-loader (pyproject.toml)
+boto3==1.37.33
+    # via public-workflow-loader (pyproject.toml)
+botocore==1.37.33
+    # via
+    #   boto3
+    #   s3transfer
 build==1.2.2.post1
     # via pip-tools
 certifi==2025.1.31
@@ -33,6 +39,10 @@ iniconfig==2.1.0
     # via pytest
 isort==6.0.1
     # via public-workflow-loader (pyproject.toml)
+jmespath==1.0.1
+    # via
+    #   boto3
+    #   botocore
 mypy-extensions==1.0.0
     # via black
 nodeenv==1.9.1
@@ -69,6 +79,8 @@ pytest-watcher==0.4.3
     # via public-workflow-loader (pyproject.toml)
 pytest-xdist==3.6.1
     # via public-workflow-loader (pyproject.toml)
+python-dateutil==2.9.0.post0
+    # via botocore
 pyyaml==6.0.2
     # via
     #   pre-commit
@@ -77,8 +89,14 @@ requests==2.32.3
     # via public-workflow-loader (pyproject.toml)
 ruff==0.11.5
     # via public-workflow-loader (pyproject.toml)
+s3transfer==0.11.4
+    # via boto3
+six==1.17.0
+    # via python-dateutil
 urllib3==2.4.0
-    # via requests
+    # via
+    #   botocore
+    #   requests
 virtualenv==20.30.0
     # via pre-commit
 watchdog==6.0.0
