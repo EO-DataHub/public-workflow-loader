@@ -31,14 +31,27 @@ def main(workspace: str, workflows_file_path: str, templates_file_path: str, pre
     """
     Load CWL workflows from the given directory and deploy them to the Workflow Runner.
     """
+
+    workflow_runner_api_url = os.getenv("WORKFLOW_RUNNER_API_URL")
+    if not workflow_runner_api_url:
+        raise ValueError("WORKFLOW_RUNNER_API_URL environment variable is not set.")
+
+    workspace_api_token = os.getenv("WORKSPACE_API_TOKEN")
+    if not workspace_api_token:
+        raise ValueError("WORKSPACE_API_TOKEN environment variable is not set.")
+
+    policy_s3_bucket = os.getenv("S3_POLICY_BUCKET")
+    if not policy_s3_bucket:
+        raise ValueError("S3_POLICY_BUCKET environment variable is not set.")
+
     workflow_runner_client = WorkflowRunnerClient(
-        base_wr_url=os.getenv("WORKFLOW_RUNNER_API_URL"),
+        base_wr_url=workflow_runner_api_url,
         workspace=workspace,
-        api_token=os.getenv("WORKSPACE_API_TOKEN"),
+        api_token=workspace_api_token,
     )
     workflow_access_client = WorkflowAccessClient(
         template_filepath=templates_file_path,
-        bucket=os.getenv("S3_POLICY_BUCKET"),
+        bucket=policy_s3_bucket,
         prefix=prefix,
         workspace=workspace,
     )
@@ -56,7 +69,6 @@ def main(workspace: str, workflows_file_path: str, templates_file_path: str, pre
     for file in workflow_files:
         file_path = os.path.join(workflows_file_path, file)
         workflow_id = workflow_runner_client.deploy_workflow_from_file_path(file_path)
-        logging.error(workflow_id)
         if workflow_id:
             workflow_access_client.create_and_upload_access_policy(workspace, workflow_id)
 
