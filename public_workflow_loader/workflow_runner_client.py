@@ -28,7 +28,7 @@ class WorkflowRunnerClient:
             },
         )
         if response.status_code != 204:
-            raise ValueError(f"Failed to update workflow: {workflow_id} - {response.text}")
+            raise ValueError(f"Attempted to update workflow: {workflow_id} - {response.text}")
         else:
             logging.info(f"Successfully updated workflow: {workflow_id}")
 
@@ -54,8 +54,7 @@ class WorkflowRunnerClient:
             self.update(workflow_id, workflow)
         else:
             raise ValueError(
-                f"Failed to deploy workflow: {workflow_id} - URL: "
-                f"{self.wr_url}/processes, Error: {response.text}"
+                f"{workflow_id} - URL: {self.wr_url}/processes, Error: {response.text}"
             )
 
     def get_workflow_id(self, workflow: bytes):
