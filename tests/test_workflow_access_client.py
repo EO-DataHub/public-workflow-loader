@@ -48,9 +48,9 @@ def test_create_and_upload_access_policy(workflow_access_client):
 
     # Assertions
     workflow_access_client.s3_client.put_object.assert_called_once_with(
-        json.dumps(expected_policy),
-        bucket,
-        f"deployed/{workspace}/{workflow_id}.access_policy.json",
+        Body=json.dumps(expected_policy),
+        Bucket=bucket,
+        Key=f"deployed/{workspace}/{workflow_id}.access-policy.json",
     )
 
 
