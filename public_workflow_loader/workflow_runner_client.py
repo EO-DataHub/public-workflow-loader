@@ -70,9 +70,9 @@ class WorkflowRunnerClient:
                     if isinstance(item, dict) and "class" in item:
                         if item["class"] == "Workflow":
                             workflow_id = item.get("id")
-                            if workflow_id is None:
-                                raise ValueError("Workflow ID not found in CWL file.")
-                            return workflow_id
+                            if workflow_id := item.get("id"):
+                                return workflow_id
+                            raise ValueError("Workflow ID not found in CWL file.")
                 raise ValueError("Invalid CWL file format: 'Workflow' class not found.")
         except yaml.YAMLError as e:
             raise ValueError(f"Failed to parse CWL file: {e}") from e
