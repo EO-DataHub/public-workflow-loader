@@ -22,6 +22,8 @@ You can confirm this worked by echoing the now set environment variables:
 echo $WORKFLOW_RUNNER_API_URL
 ```
 
+This application also uploads workflow access policies to S3 using boto3, so suitable AWS credentials need to be provided via environment variables.
+
 This repository also includes a Dockerfile to build an image for this application which can then be run as a container wherever needed.
 
 It is suggested you deploy this image and mount a volume into it, defining your CWL files, ensuring your specify the mount path of this volume in your command line input <workflows-dir>.
