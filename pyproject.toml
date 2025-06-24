@@ -14,7 +14,7 @@
 
 [project]
 name = "public-workflow-loader"
-version = "0.1.0"
+dynamic = ["version"]
 description = "A service which provides a Command Line Tool which loads the provided CWL scripts and attempts to deploy them to the Workflow Runner API, in some given workspace."
 readme = "README.md"
 
@@ -66,7 +66,7 @@ classifiers = [
 dependencies = [
   "click",
   "pyyaml",
-  "requests>=2.32.4",
+  "requests",
   "boto3"
 ]
 
@@ -110,6 +110,9 @@ markers = [
 
 [tool.setuptools]
 packages = []
+
+[tool.setuptools-git-versioning]
+enabled = true
 
 [tool.black]
 line-length = 100
