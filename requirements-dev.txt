@@ -6,9 +6,9 @@
 #
 black==25.1.0
     # via public-workflow-loader (pyproject.toml)
-boto3==1.38.42
+boto3==1.39.0
     # via public-workflow-loader (pyproject.toml)
-botocore==1.38.42
+botocore==1.39.0
     # via
     #   boto3
     #   s3transfer
@@ -79,7 +79,7 @@ pytest-mock==3.14.1
     # via public-workflow-loader (pyproject.toml)
 pytest-watcher==0.4.3
     # via public-workflow-loader (pyproject.toml)
-pytest-xdist==3.7.0
+pytest-xdist==3.8.0
     # via public-workflow-loader (pyproject.toml)
 python-dateutil==2.9.0.post0
     # via botocore
@@ -89,7 +89,7 @@ pyyaml==6.0.2
     #   public-workflow-loader (pyproject.toml)
 requests==2.32.4
     # via public-workflow-loader (pyproject.toml)
-ruff==0.12.0
+ruff==0.12.1
     # via public-workflow-loader (pyproject.toml)
 s3transfer==0.13.0
     # via boto3
