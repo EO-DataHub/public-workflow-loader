@@ -7,19 +7,21 @@ import pytest
 from public_workflow_loader.workflow_runner_client import WorkflowRunnerClient
 
 
-@pytest.fixture()
-def workflow_runner_client():
-    workflow_runner_client = WorkflowRunnerClient(
+@pytest.fixture
+def workflow_runner_client() -> WorkflowRunnerClient:
+    return WorkflowRunnerClient(
         base_wr_url="https://example.com/wr",
         workspace="test-workspace",
         api_token="test-token",
     )
-    return workflow_runner_client
 
 
 @patch("requests.post")
-def test_deploy_success(mock_requests_post, workflow_runner_client, caplog):
-
+def test_deploy_success(
+    mock_requests_post: mock.MagicMock,
+    workflow_runner_client: WorkflowRunnerClient,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     # Set logging level
     caplog.set_level(logging.INFO)
 
@@ -44,9 +46,11 @@ def test_deploy_success(mock_requests_post, workflow_runner_client, caplog):
 @patch("requests.post")
 @patch("requests.put")
 def test_deploy_update_success(
-    mock_requests_put, mock_requests_post, workflow_runner_client, caplog
-):
-
+    mock_requests_put: mock.MagicMock,
+    mock_requests_post: mock.MagicMock,
+    workflow_runner_client: WorkflowRunnerClient,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     # Set logging level
     caplog.set_level(logging.INFO)
 
@@ -75,19 +79,18 @@ def test_deploy_update_success(
             "Content-Type": "application/cwl+yaml",
         },
     )
-    assert (
-        "Failed to deploy workflow: test_workflow, already deployed, updating instead."
-        in caplog.text
-    )
+    assert "Failed to deploy workflow: test_workflow, already deployed, updating instead." in caplog.text
     assert "Successfully updated workflow: test_workflow" in caplog.text
 
 
 @patch("requests.post")
 @patch("requests.put")
 def test_deploy_update_failure(
-    mock_requests_put, mock_requests_post, workflow_runner_client, caplog
-):
-
+    mock_requests_put: mock.MagicMock,
+    mock_requests_post: mock.MagicMock,
+    workflow_runner_client: WorkflowRunnerClient,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     # Set logging level
     caplog.set_level(logging.INFO)
 
@@ -95,7 +98,7 @@ def test_deploy_update_failure(
     mock_requests_post.return_value.status_code = 409
     mock_requests_put.return_value.status_code = 500
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="Attempted to update workflow"):
         workflow_runner_client.deploy("test_workflow", b"test_workflow_content")
 
     # Assertions
@@ -117,22 +120,22 @@ def test_deploy_update_failure(
             "Content-Type": "application/cwl+yaml",
         },
     )
-    assert (
-        "Failed to deploy workflow: test_workflow, already deployed, updating instead."
-        in caplog.text
-    )
+    assert "Failed to deploy workflow: test_workflow, already deployed, updating instead." in caplog.text
 
 
 @patch("requests.post")
-def test_deploy_failure(mock_requests_post, workflow_runner_client, caplog):
-
+def test_deploy_failure(
+    mock_requests_post: mock.MagicMock,
+    workflow_runner_client: WorkflowRunnerClient,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     # Set logging level
     caplog.set_level(logging.INFO)
 
     # Configure mocks
     mock_requests_post.return_value.status_code = 500
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="test_workflow - URL:"):
         workflow_runner_client.deploy("test_workflow", b"test_workflow_content")
 
     # Assertions
@@ -147,7 +150,7 @@ def test_deploy_failure(mock_requests_post, workflow_runner_client, caplog):
     )
 
 
-def test_get_workflow_id(workflow_runner_client):
+def test_get_workflow_id(workflow_runner_client: WorkflowRunnerClient) -> None:
     # Mock the workflow content
     workflow_content = b"""\
         cwlVersion: v1.0
@@ -166,7 +169,7 @@ def test_get_workflow_id(workflow_runner_client):
     assert result == "test_workflow"
 
 
-def test_get_workflow_id_invalid_yaml(workflow_runner_client):
+def test_get_workflow_id_invalid_yaml(workflow_runner_client: WorkflowRunnerClient) -> None:
     # Mock the workflow content
     workflow_content = b"""\
         cwlVersion: v1.0
@@ -183,7 +186,7 @@ def test_get_workflow_id_invalid_yaml(workflow_runner_client):
         workflow_runner_client.get_workflow_id(workflow_content)
 
 
-def test_get_workflow_id_missing_workflow(workflow_runner_client):
+def test_get_workflow_id_missing_workflow(workflow_runner_client: WorkflowRunnerClient) -> None:
     # Mock the workflow content
     workflow_content = b"""\
         cwlVersion: v1.0
@@ -196,11 +199,11 @@ def test_get_workflow_id_missing_workflow(workflow_runner_client):
           id: step-2
     """
     # Call the method
-    with pytest.raises(ValueError, match="Invalid CWL file format: 'Workflow' class not found."):
+    with pytest.raises(ValueError, match=r"Invalid CWL file format: 'Workflow' class not found\."):
         workflow_runner_client.get_workflow_id(workflow_content)
 
 
-def test_get_workflow_id_missing_id(workflow_runner_client):
+def test_get_workflow_id_missing_id(workflow_runner_client: WorkflowRunnerClient) -> None:
     # Mock the workflow content
     workflow_content = b"""\
         cwlVersion: v1.0
@@ -213,7 +216,7 @@ def test_get_workflow_id_missing_id(workflow_runner_client):
           id: step-2
     """
     # Call the method
-    with pytest.raises(ValueError, match="Workflow ID not found in CWL file."):
+    with pytest.raises(ValueError, match=r"Workflow ID not found in CWL file\."):
         workflow_runner_client.get_workflow_id(workflow_content)
 
 
@@ -232,14 +235,17 @@ def test_get_workflow_id_missing_id(workflow_runner_client):
     """,
 )
 @patch("public_workflow_loader.workflow_runner_client.WorkflowRunnerClient.deploy")
-def test_deploy_workflow_from_file_path(mock_deploy, mock_open, workflow_runner_client):
-
+def test_deploy_workflow_from_file_path(
+    mock_deploy: mock.MagicMock,
+    mock_open: mock.MagicMock,
+    workflow_runner_client: WorkflowRunnerClient,
+) -> None:
     # Configure mocks
     mock_deploy.return_value = None
     workflow_runner_client.deploy_workflow_from_file_path("path/to/workflow.cwl")
 
     # Assertions
-    mock_open.assert_called_once_with("path/to/workflow.cwl", "r")
+    mock_open.assert_called_once_with("path/to/workflow.cwl")
     mock_deploy.assert_called_once_with(
         "test_workflow",
         b"""\

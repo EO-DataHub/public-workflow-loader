@@ -12,12 +12,12 @@ logging.basicConfig(
 )
 
 
-def does_dir_exist(path: str):
+def does_dir_exist(path: str) -> bool:
     """
     Check if the given directory exists.
     """
     if not os.path.exists(path):
-        logging.error("Directory %s does not exist.", dir)
+        logging.error("Directory %s does not exist.", path)
         return False
     return True
 
@@ -27,7 +27,7 @@ def does_dir_exist(path: str):
 @click.argument("workflows-file-path", type=str)
 @click.argument("templates-file-path", type=str)
 @click.option("-p", "--prefix", type=str, default="deployed")
-def main(workspace: str, workflows_file_path: str, templates_file_path: str, prefix: str):
+def main(workspace: str, workflows_file_path: str, templates_file_path: str, prefix: str) -> None:
     """
     Load CWL workflows from the given directory and deploy them to the Workflow Runner.
     """
@@ -60,9 +60,7 @@ def main(workspace: str, workflows_file_path: str, templates_file_path: str, pre
         raise ValueError(f"Directory {workflows_file_path} does not exist.")
 
     ## Get all files in directory
-    workflow_files = [
-        file_path for file_path in os.listdir(workflows_file_path) if file_path.endswith(".cwl")
-    ]
+    workflow_files = [file_path for file_path in os.listdir(workflows_file_path) if file_path.endswith(".cwl")]
 
     logging.info("Found workflow files to load: %s", workflow_files)
 
