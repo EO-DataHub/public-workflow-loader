@@ -1,4 +1,5 @@
 import json
+from typing import cast
 from unittest import mock
 from unittest.mock import mock_open, patch
 
@@ -7,14 +8,14 @@ import pytest
 from public_workflow_loader.workflow_access_client import WorkflowAccessClient
 
 
-@pytest.fixture()
+@pytest.fixture
 @patch("boto3.client")
 @patch(
     "builtins.open",
     new_callable=mock_open,
     read_data="""{"id": "", "public": true, "user_service": false}""",
 )
-def workflow_access_client(mock_open, mock_boto3_client):
+def workflow_access_client(mock_open: mock.MagicMock, mock_boto3_client: mock.MagicMock) -> WorkflowAccessClient:
     # Configure mocks
     mock_boto3_client_instance = mock.Mock()
     mock_boto3_client_instance.put_object.return_value = None
@@ -28,7 +29,7 @@ def workflow_access_client(mock_open, mock_boto3_client):
     return workflow_access_client
 
 
-def test_create_access_policy(workflow_access_client):
+def test_create_access_policy(workflow_access_client: WorkflowAccessClient) -> None:
     # Configure mocks
     result = workflow_access_client.create_access_policy("test_workflow")
 
@@ -36,7 +37,7 @@ def test_create_access_policy(workflow_access_client):
     assert result == {"id": "test_workflow", "public": True, "user_service": False}
 
 
-def test_create_and_upload_access_policy(workflow_access_client):
+def test_create_and_upload_access_policy(workflow_access_client: WorkflowAccessClient) -> None:
     # Configure mocks
     workflow_access_client.create_and_upload_access_policy("test-workspace", "test_workflow")
 
@@ -47,7 +48,8 @@ def test_create_and_upload_access_policy(workflow_access_client):
     expected_policy = {"id": "test_workflow", "public": True, "user_service": False}
 
     # Assertions
-    workflow_access_client.s3_client.put_object.assert_called_once_with(
+    mock_s3 = cast(mock.Mock, workflow_access_client.s3_client)
+    mock_s3.put_object.assert_called_once_with(
         Body=json.dumps(expected_policy),
         Bucket=bucket,
         Key=f"deployed/{workspace}/{workflow_id}.access-policy.json",
@@ -55,7 +57,7 @@ def test_create_and_upload_access_policy(workflow_access_client):
 
 
 @patch("boto3.client")
-def test_create_s3_client(mock_boto3_client):
+def test_create_s3_client(mock_boto3_client: mock.MagicMock) -> None:
     WorkflowAccessClient.create_s3_client()
 
     # Assertions

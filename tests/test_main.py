@@ -1,4 +1,5 @@
 import os
+from collections.abc import Generator
 from unittest import mock
 from unittest.mock import patch
 
@@ -8,8 +9,8 @@ from click.testing import CliRunner
 from public_workflow_loader.__main__ import does_dir_exist, main
 
 
-@pytest.fixture()
-def setenvvar(monkeypatch):
+@pytest.fixture
+def setenvvar(monkeypatch: pytest.MonkeyPatch) -> Generator[None]:
     with mock.patch.dict(os.environ, clear=True):
         envvars = {
             "WORKFLOW_RUNNER_API_URL": "https://example.com/wr",
@@ -26,13 +27,12 @@ def setenvvar(monkeypatch):
 @patch("public_workflow_loader.__main__.WorkflowRunnerClient")
 @patch("public_workflow_loader.__main__.WorkflowAccessClient")
 def test_cli(
-    mock_WorkflowAccessClient,
-    mock_WorkflowRunnerClient,
-    mock_list_dir,
-    mock_does_dir_exist,
-    setenvvar,
-):
-
+    mock_WorkflowAccessClient: mock.MagicMock,
+    mock_WorkflowRunnerClient: mock.MagicMock,
+    mock_list_dir: mock.MagicMock,
+    mock_does_dir_exist: mock.MagicMock,
+    setenvvar: None,
+) -> None:
     # Configure mocks
     mock_workflow_access_client = mock.Mock()
     mock_workflow_access_client.create_and_upload_access_policy.return_value = None
@@ -75,19 +75,11 @@ def test_cli(
     mock_does_dir_exist.assert_called_once_with("./workflows")
     mock_list_dir.assert_called_once_with("./workflows")
     assert mock_workflow_runner_client.deploy_workflow_from_file_path.call_count == 2
-    mock_workflow_runner_client.deploy_workflow_from_file_path.assert_any_call(
-        "./workflows/test_workflow.cwl"
-    )
-    mock_workflow_runner_client.deploy_workflow_from_file_path.assert_any_call(
-        "./workflows/another_workflow.cwl"
-    )
+    mock_workflow_runner_client.deploy_workflow_from_file_path.assert_any_call("./workflows/test_workflow.cwl")
+    mock_workflow_runner_client.deploy_workflow_from_file_path.assert_any_call("./workflows/another_workflow.cwl")
     assert mock_workflow_access_client.create_and_upload_access_policy.call_count == 2
-    mock_workflow_access_client.create_and_upload_access_policy.assert_any_call(
-        workspace, "test_workflow"
-    )
-    mock_workflow_access_client.create_and_upload_access_policy.assert_any_call(
-        workspace, "another_workflow"
-    )
+    mock_workflow_access_client.create_and_upload_access_policy.assert_any_call(workspace, "test_workflow")
+    mock_workflow_access_client.create_and_upload_access_policy.assert_any_call(workspace, "another_workflow")
 
 
 @patch("public_workflow_loader.__main__.does_dir_exist")
@@ -95,13 +87,12 @@ def test_cli(
 @patch("public_workflow_loader.__main__.WorkflowRunnerClient")
 @patch("public_workflow_loader.__main__.WorkflowAccessClient")
 def test_cli_failed_to_deploy(
-    mock_WorkflowAccessClient,
-    mock_WorkflowRunnerClient,
-    mock_list_dir,
-    mock_does_dir_exist,
-    setenvvar,
-):
-
+    mock_WorkflowAccessClient: mock.MagicMock,
+    mock_WorkflowRunnerClient: mock.MagicMock,
+    mock_list_dir: mock.MagicMock,
+    mock_does_dir_exist: mock.MagicMock,
+    setenvvar: None,
+) -> None:
     # Configure mocks
     mock_workflow_access_client = mock.Mock()
     mock_workflow_access_client.create_and_upload_access_policy.return_value = None
@@ -144,17 +135,11 @@ def test_cli_failed_to_deploy(
     mock_does_dir_exist.assert_called_once_with("./workflows")
     mock_list_dir.assert_called_once_with("./workflows")
     assert mock_workflow_runner_client.deploy_workflow_from_file_path.call_count == 2
-    mock_workflow_runner_client.deploy_workflow_from_file_path.assert_any_call(
-        "./workflows/test_workflow.cwl"
-    )
-    mock_workflow_runner_client.deploy_workflow_from_file_path.assert_any_call(
-        "./workflows/another_workflow.cwl"
-    )
+    mock_workflow_runner_client.deploy_workflow_from_file_path.assert_any_call("./workflows/test_workflow.cwl")
+    mock_workflow_runner_client.deploy_workflow_from_file_path.assert_any_call("./workflows/another_workflow.cwl")
     # This will only be called for the second file, as the first workflow failed to deploy
     assert mock_workflow_access_client.create_and_upload_access_policy.call_count == 1
-    mock_workflow_access_client.create_and_upload_access_policy.assert_any_call(
-        workspace, "another_workflow"
-    )
+    mock_workflow_access_client.create_and_upload_access_policy.assert_any_call(workspace, "another_workflow")
 
 
 @patch("public_workflow_loader.__main__.does_dir_exist")
@@ -162,14 +147,13 @@ def test_cli_failed_to_deploy(
 @patch("public_workflow_loader.__main__.WorkflowRunnerClient")
 @patch("public_workflow_loader.__main__.WorkflowAccessClient")
 def test_cli_dir_doesnt_exist(
-    mock_WorkflowAccessClient,
-    mock_WorkflowRunnerClient,
-    mock_list_dir,
-    mock_does_dir_exist,
-    setenvvar,
-    caplog,
-):
-
+    mock_WorkflowAccessClient: mock.MagicMock,
+    mock_WorkflowRunnerClient: mock.MagicMock,
+    mock_list_dir: mock.MagicMock,
+    mock_does_dir_exist: mock.MagicMock,
+    setenvvar: None,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
     # Configure mocks
     mock_workflow_access_client = mock.Mock()
     mock_workflow_access_client.create_and_upload_access_policy.return_value = None
@@ -200,7 +184,7 @@ def test_cli_dir_doesnt_exist(
     assert "Directory ./workflows does not exist." in str(result.exception)
 
 
-def test_does_dir_exist():
+def test_does_dir_exist() -> None:
     # Test with an existing directory
     assert does_dir_exist("./tests")
 
