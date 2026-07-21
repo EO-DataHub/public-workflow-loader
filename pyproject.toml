@@ -85,6 +85,7 @@ packages = ["public_workflow_loader"]
 
 [tool.uv]
 package = true
+exclude-newer = "7 days"
 
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
