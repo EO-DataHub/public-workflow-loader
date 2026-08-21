@@ -28,7 +28,7 @@ name = "public-workflow-loader"
 dynamic = ["version"]
 description = "A service which provides a Command Line Tool which loads the provided CWL scripts and attempts to deploy them to the Workflow Runner API, in some given workspace."
 readme = "README.md"
-requires-python = ">=3.13,<3.14"
+requires-python = ">=3.14,<3.15"
 license = {file = "LICENSE"}
 authors = [
   {name = "Telespazio UK Ltd", email = "thomas.jellicoe@telespazio.com" }
@@ -54,7 +54,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "boto3-stubs[s3]==1.42.97",
+    "boto3-stubs[s3]==1.43.72",
     "pre-commit",
     "pyright",
     "pytest",
