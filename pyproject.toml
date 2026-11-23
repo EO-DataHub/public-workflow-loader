@@ -54,7 +54,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "boto3-stubs[s3]==1.43.126",
+    "boto3-stubs[s3]==1.43.127",
     "pre-commit",
     "pyright",
     "pytest",
